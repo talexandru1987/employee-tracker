@@ -1,6 +1,6 @@
 const inquirer = require("inquirer");
 
-const journeys = async () => {
+const journey = async () => {
   // prompt question
   const questions = [
     {
@@ -21,6 +21,4 @@ const journeys = async () => {
   return { officeNumber };
 };
 
-module.exports = {
-  journeys,
-};
+module.exports = { journey };

@@ -1,13 +1,15 @@
-const { journeys } = require("../src/utils/questions");
-
+//import the env package
 require("dotenv").config();
 
-const initDatabase = require("./data");
-const question = require("./questions");
+//import the questions
+const { journey } = require("./utils/questions");
+//import the database file
+const initDatabase = require("./db");
 
 const init = async () => {
   //code to render ask the questions and add to database
   try {
+    //connect to the database
     const { executeQuery, closeConnection } = await initDatabase({
       host: process.env.DB_HOST,
       user: process.env.DB_USER,
@@ -18,25 +20,19 @@ const init = async () => {
     let inProgress = true;
 
     while (inProgress) {
-      const { dbAction } = await inquirer.prompt(question);
+      //code for the questions
+      // const departments = await executeQuery("SELECT * FROM department", (err, results, fields) => {
+      //   console.log(err); // return errors if any
+      //   console.log(results); // results contains rows returned by server
+      //   console.log(fields); // fields contains extra meta data about results, if available
+      // });
 
-      if (dbAction === "getUsers") {
-        const users = await executeQuery("SELECT * FROM users");
+      const departments = await executeQuery("SELECT * FROM department");
 
-        console.table(users);
-      }
+      console.log(departments);
 
-      if (dbAction === "getBooks") {
-        const books = await executeQuery("SELECT * FROM ??", ["books"]);
-
-        console.table(books);
-      }
-
-      if (dbAction === "quit") {
-        await closeConnection();
-        inProgress = false;
-        console.log("THANK YOU");
-      }
+      //stop the loop during testing, DELETE after
+      inProgress = false;
     }
   } catch (error) {
     console.log(`[ERROR]: Internal error | ${error.message}`);

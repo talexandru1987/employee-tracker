@@ -27,3 +27,4 @@ CREATE TABLE employee (
      foreign key (manager_id) references employee (id),
      primary key (id)
 );
+

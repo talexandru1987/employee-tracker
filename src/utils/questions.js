@@ -4,21 +4,27 @@ const journey = async () => {
   // prompt question
   const questions = [
     {
-      type: "input",
-      message: "Please enter an office number",
-      name: "officeNumber",
-      validate(answer) {
-        const emailRegex = /^[1-9]+[0-9]*$/;
-        if (!emailRegex.test(answer)) {
-          return "You have to provide a valid office number!";
-        }
-        return true;
-      },
+      type: "rawlist",
+      message: "Please select one of the following options",
+      name: "journey",
+      choices: [
+        "View all departments",
+        "View all roles",
+        "View all employees",
+        new inquirer.Separator(),
+        "Add a department",
+        "Add a role",
+        "Add an employee",
+        new inquirer.Separator(),
+        "Update an employee role",
+        "Quit",
+        new inquirer.Separator(),
+      ],
     },
   ];
-  const { officeNumber } = await inquirer.prompt(questions);
+  const { journey } = await inquirer.prompt(questions);
 
-  return { officeNumber };
+  return { journey };
 };
 
 module.exports = { journey };

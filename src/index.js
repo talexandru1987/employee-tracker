@@ -18,7 +18,8 @@ const init = async () => {
     });
 
     let inProgress = true;
-
+    let selectedJourney = await journey();
+    console.log(selectedJourney);
     while (inProgress) {
       //code for the questions
       // const departments = await executeQuery("SELECT * FROM department", (err, results, fields) => {
@@ -27,9 +28,9 @@ const init = async () => {
       //   console.log(fields); // fields contains extra meta data about results, if available
       // });
 
-      const departments = await executeQuery("SELECT * FROM department");
+      //const departments = await executeQuery("SELECT * FROM department");
 
-      console.log(departments);
+      //console.log(departments);
 
       //stop the loop during testing, DELETE after
       inProgress = false;

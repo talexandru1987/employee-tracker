@@ -2,7 +2,14 @@
 require("dotenv").config();
 
 //import the questions
-const { journey } = require("./utils/questions");
+const {
+  journey,
+  addDepartment,
+  addRole,
+  addEmployee,
+  updateEmployeeRole,
+  updateEmployeeManager,
+} = require("./utils/questions");
 //import the database file
 const initDatabase = require("./db");
 
@@ -18,8 +25,13 @@ const init = async () => {
     });
 
     let inProgress = true;
-    let selectedJourney = await journey();
-    console.log(selectedJourney);
+    //let selectedJourney = await journey();
+    //let addDepartments = await addDepartment();
+    //let addRoles = await addRole(["IT", "HR"]);
+    //let addEmployees = await addEmployee(["IT", "HR"], ["Alex", "Raluca"]);
+    //let updateEmployeesRole = await updateEmployeeRole(["Steve", "Bob"], ["Alex", "Raluca"]);
+    let updateEmployeesManager = await updateEmployeeManager(["Steve", "Bob"], ["Alex", "Raluca"]);
+    console.log(updateEmployeesManager);
     while (inProgress) {
       //code for the questions
       // const departments = await executeQuery("SELECT * FROM department", (err, results, fields) => {

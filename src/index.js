@@ -9,6 +9,8 @@ const {
   addEmployee,
   updateEmployeeRole,
   updateEmployeeManager,
+  deleteRecordOption,
+  deleteRecord,
 } = require("./utils/questions");
 //import the database file
 const initDatabase = require("./db");
@@ -25,15 +27,17 @@ const init = async () => {
     });
 
     let inProgress = true;
-    //let selectedJourney = await journey();
+    let selectedJourney = await journey();
     //let addDepartments = await addDepartment();
     //let addRoles = await addRole(["IT", "HR"]);
     //let addEmployees = await addEmployee(["IT", "HR"], ["Alex", "Raluca"]);
     //let updateEmployeesRole = await updateEmployeeRole(["Steve", "Bob"], ["Alex", "Raluca"]);
-    let updateEmployeesManager = await updateEmployeeManager(["Steve", "Bob"], ["Alex", "Raluca"]);
-    console.log(updateEmployeesManager);
+    //let updateEmployeesManager = await updateEmployeeManager(["Steve", "Bob"], ["Alex", "Raluca"]);
+    //let deleteRecordOptions = await deleteRecordOption();
+    //let deleteRecords = await deleteRecord("department", ["IT", "HR", "Finance"]);
+
+    console.log(selectedJourney);
     while (inProgress) {
-      //code for the questions
       // const departments = await executeQuery("SELECT * FROM department", (err, results, fields) => {
       //   console.log(err); // return errors if any
       //   console.log(results); // results contains rows returned by server

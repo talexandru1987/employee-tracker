@@ -1,5 +1,5 @@
 const inquirer = require("inquirer");
-
+//initial menu question
 const journey = async () => {
   // prompt question
   const questions = [
@@ -11,22 +11,68 @@ const journey = async () => {
         "View all departments",
         "View all roles",
         "View all employees",
+        "View employees by department",
+        "View employees by manager",
+        "View utilized department budget",
         new inquirer.Separator(),
         "Add a department",
         "Add a role",
         "Add an employee",
         new inquirer.Separator(),
-        "Update an employee role",
+        "Update an employee's role",
+        "Update an employee's manager",
+        "Delete options",
         "Quit",
-        new inquirer.Separator(),
       ],
     },
+    {
+      type: "input",
+      message: "Please enter the department name",
+      name: "department",
+      when(answers) {
+        return answers.journey === "View employees by department";
+      },
+      validate(answer) {
+        if (!answer) {
+          return "Department name cannot be blank";
+        }
+        return true;
+      },
+    },
+    {
+      type: "input",
+      message: "Please enter the manager name",
+      name: "manager",
+      when(answers) {
+        return answers.journey === "View employees by manager";
+      },
+      validate(answer) {
+        if (!answer) {
+          return "Manager name cannot be blank";
+        }
+        return true;
+      },
+    },
+    {
+      type: "input",
+      message: "Please enter the department name",
+      name: "budgetDepartment",
+      when(answers) {
+        return answers.journey === "View utilized department budget";
+      },
+      validate(answer) {
+        if (!answer) {
+          return "Department name cannot be blank";
+        }
+        return true;
+      },
+    },
   ];
-  const { journey } = await inquirer.prompt(questions);
+  const { journey, department, manager, budgetDepartment } = await inquirer.prompt(questions);
 
-  return { journey };
+  return { journey, department, manager, budgetDepartment };
 };
-
+//questions for adding a department
 const addDepartment = async () => {
   // prompt question
   const questions = [
@@ -55,7 +101,7 @@ const addDepartment = async () => {
 
   return { department, confirmAdd };
 };
-
+//questions for adding a role
 const addRole = async (departmentArray) => {
   // prompt question
   const questions = [
@@ -107,7 +153,7 @@ const addRole = async (departmentArray) => {
 
   return { confirmAdd, roleTitle, roleSalary, department };
 };
-
+//questions for adding an employee
 const addEmployee = async (roleArray, managerArray) => {
   // prompt question
   const questions = [
@@ -168,7 +214,7 @@ const addEmployee = async (roleArray, managerArray) => {
 
   return { confirmAdd, firstName, lastName, role, manager };
 };
-
+//questions for update an employee's role
 const updateEmployeeRole = async (employeeArray, roleArray) => {
   // prompt question
   const questions = [
@@ -204,7 +250,7 @@ const updateEmployeeRole = async (employeeArray, roleArray) => {
 
   return { confirmAdd, employee, role };
 };
-
+//questions for update an employee's manager
 const updateEmployeeManager = async (employeeArray, managerArray) => {
   // prompt question
   const questions = [
@@ -240,6 +286,54 @@ const updateEmployeeManager = async (employeeArray, managerArray) => {
 
   return { confirmAdd, employee, manager };
 };
+//questions for selecting the delete options
+const deleteRecordOption = async () => {
+  // prompt question
+  const questions = [
+    {
+      type: "confirm",
+      message: "Do you want continue with the delete option?",
+      name: "confirmAdd",
+      default: false,
+    },
+
+    {
+      type: "rawlist",
+      message: "Please select one of the following options",
+      name: "deleteOption",
+      when(answers) {
+        return answers.confirmAdd;
+      },
+      choices: ["Department", "Role", "Employee"],
+    },
+  ];
+  const { confirmAdd, deleteOption } = await inquirer.prompt(questions);
+
+  return { confirmAdd, deleteOption };
+};
+//questions to get information needed to identify a record for delete
+const deleteRecord = async (record, choicesArray) => {
+  // prompt question
+  const questions = [
+    {
+      type: "rawlist",
+      message: `Please select the ${record} you wish to delete`,
+      name: "deleteRecord",
+      choices: choicesArray,
+    },
+    {
+      type: "confirm",
+      message(answers) {
+        return `Are you sure you want to delete the ${record}: ${answers.deleteRecord} ?`;
+      },
+      name: "confirmDelete",
+      default: false,
+    },
+  ];
+  const { deleteRecord, confirmDelete } = await inquirer.prompt(questions);
+
+  return { deleteRecord, confirmDelete };
+};
 
 module.exports = {
   journey,
@@ -248,4 +342,6 @@ module.exports = {
   addEmployee,
   updateEmployeeRole,
   updateEmployeeManager,
+  deleteRecordOption,
+  deleteRecord,
 };

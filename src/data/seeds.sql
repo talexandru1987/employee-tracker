@@ -28,14 +28,26 @@ INSERT INTO role(
 ) VALUES (
   21, 
   "Developer", 
-  "4000",
+  "6000",
   11
 ),
 (
   22, 
   "Manager", 
-  "6000",
+  "5000",
   12
+),
+(
+  23, 
+  "Engineer", 
+  "4000",
+  13
+)
+(
+  24, 
+  "Advisor", 
+  "3000",
+  14
 );
 
 INSERT INTO employee(
@@ -57,4 +69,18 @@ INSERT INTO employee(
   "Tanase",
   21,
   31
+)
+(
+  33, 
+  "Bob", 
+  "Smith",
+  23,
+  31
+)
+(
+  34, 
+  "Sam", 
+  "Smith",
+  24,
+  NULL
 );

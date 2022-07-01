@@ -12,6 +12,10 @@ const {
   deleteRecordOption,
   deleteRecord,
 } = require("./utils/questions");
+
+//import sql statements
+const { selectAll, selectAllWhere } = require("./utils/utils");
+
 //import the database file
 const initDatabase = require("./db");
 
@@ -27,7 +31,6 @@ const init = async () => {
     });
 
     let inProgress = true;
-    let selectedJourney = await journey();
     //let addDepartments = await addDepartment();
     //let addRoles = await addRole(["IT", "HR"]);
     //let addEmployees = await addEmployee(["IT", "HR"], ["Alex", "Raluca"]);
@@ -36,17 +39,35 @@ const init = async () => {
     //let deleteRecordOptions = await deleteRecordOption();
     //let deleteRecords = await deleteRecord("department", ["IT", "HR", "Finance"]);
 
-    console.log(selectedJourney);
     while (inProgress) {
-      // const departments = await executeQuery("SELECT * FROM department", (err, results, fields) => {
-      //   console.log(err); // return errors if any
-      //   console.log(results); // results contains rows returned by server
-      //   console.log(fields); // fields contains extra meta data about results, if available
-      // });
-
-      //const departments = await executeQuery("SELECT * FROM department");
-
-      //console.log(departments);
+      //start the initial questions
+      let selectedJourney = await journey();
+      //check the selection an continue
+      if (selectedJourney.journey === "View all departments") {
+        //get data
+        const dataDepartments = await executeQuery(selectAll("department"));
+        //show data
+        console.log(dataDepartments);
+      } else if (selectedJourney.journey === "View all roles") {
+        //get data
+        const dataRoles = await executeQuery(selectAll("role"));
+        //show data
+        console.log(dataRoles);
+      } else if (selectedJourney.journey === "View all employees") {
+        //get data
+        const dataEmployees = await executeQuery(selectAll("employee"));
+        //show data
+        console.log(dataEmployees);
+      } else if (selectedJourney.journey === "View employees by department") {
+        //get data
+        //const dataDepartmentEmployees = await executeQuery(selectAllWhere("department", "IT"));
+        console.log(selectedJourney.department);
+        const dataDepartmentEmployees = await executeQuery(
+          selectAllWhere(`SELECT * FROM department WHERE name = "IT"`)
+        );
+        //show data
+        console.log(dataDepartmentEmployees);
+      }
 
       //stop the loop during testing, DELETE after
       inProgress = false;

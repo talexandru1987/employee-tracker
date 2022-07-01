@@ -42,7 +42,7 @@ INSERT INTO role(
   "Engineer", 
   "4000",
   13
-)
+),
 (
   24, 
   "Advisor", 
@@ -69,14 +69,14 @@ INSERT INTO employee(
   "Tanase",
   21,
   31
-)
+),
 (
   33, 
   "Bob", 
   "Smith",
   23,
   31
-)
+),
 (
   34, 
   "Sam", 

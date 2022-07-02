@@ -29,9 +29,26 @@ const maxId = (aDepartment) => `SELECT max(id) as max FROM ${aDepartment}`;
 const addArole = (anId, aTitle, aSalary, aDepartment_id) =>
   `INSERT INTO role (id, title, salary, department_id) VALUES ('${anId}', '${aTitle}','${aSalary}','${aDepartment_id}')`;
 
-//get specifict department if
+//get specific department if
 const specificDepartment = (aDepartment) =>
   `SELECT id FROM department WHERE name = '${aDepartment}'`;
+
+//get all employees by role
+const employeeByRole = (aRole) => `SELECT e.id, first_name 
+  FROM employee e, role r
+  WHERE e.role_id = r.id 
+  and r.title = '${aRole}';`;
+
+//add an employee
+const addAnEmployee = (anId, fName, lName, rId, mId) =>
+  `INSERT INTO employee (id, first_name, last_name, role_id, manager_id) VALUES ('${anId}', '${fName}','${lName}','${rId}','${mId}')`;
+
+//update an employee role
+const updateEmployeeDetails = (aColumn, aValue, anId) =>
+  `UPDATE employee SET ${aColumn} = '${aValue}' WHERE id = '${anId}'`;
+
+const deleteAnOption = (aTable, aValue, anId) =>
+  `DELETE FROM ${aTable} WHERE ${aValue} = '${anId}'`;
 
 module.exports = {
   selectAll,
@@ -42,4 +59,8 @@ module.exports = {
   maxId,
   addArole,
   specificDepartment,
+  employeeByRole,
+  addAnEmployee,
+  updateEmployeeDetails,
+  deleteAnOption,
 };

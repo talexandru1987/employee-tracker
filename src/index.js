@@ -23,6 +23,10 @@ const {
   maxId,
   addArole,
   specificDepartment,
+  employeeByRole,
+  addAnEmployee,
+  updateEmployeeDetails,
+  deleteAnOption,
 } = require("./utils/utils");
 
 //import the database file
@@ -41,8 +45,6 @@ const init = async () => {
 
     let inProgress = true;
 
-    //let addEmployees = await addEmployee(["IT", "HR"], ["Alex", "Raluca"]);
-    //let updateEmployeesRole = await updateEmployeeRole(["Steve", "Bob"], ["Alex", "Raluca"]);
     //let updateEmployeesManager = await updateEmployeeManager(["Steve", "Bob"], ["Alex", "Raluca"]);
     //let deleteRecordOptions = await deleteRecordOption();
     //let deleteRecords = await deleteRecord("department", ["IT", "HR", "Finance"]);
@@ -75,18 +77,18 @@ const init = async () => {
         console.log(dataDepartmentEmployees);
       } else if (selectedJourney.journey === "View employees by manager") {
         //get data
-        const dataDepartmentEmployees = await executeQuery(
+        const dataManagerEmployees = await executeQuery(
           selectManagerEmployees(selectedJourney.manager)
         );
         //show data
-        console.log(dataDepartmentEmployees);
+        console.log(dataManagerEmployees);
       } else if (selectedJourney.journey === "View utilized department budget") {
         //get data
-        const dataDepartmentEmployees = await executeQuery(
+        const dataDepartmentBudget = await executeQuery(
           selectDepartmentBudget(selectedJourney.budgetDepartment)
         );
         //show data
-        console.log(dataDepartmentEmployees);
+        console.log(dataDepartmentBudget);
       } else if (selectedJourney.journey === "Add a department") {
         //ask questions
         let addDepartments = await addDepartment();
@@ -95,14 +97,14 @@ const init = async () => {
           //get the max id from table
           let departmentID = await executeQuery(maxId("department"));
           //insert the data
-          const dataDepartmentEmployees = await executeQuery(
+          const dataAddDepartment = await executeQuery(
             addAdepartment(departmentID[0].max + 1, addDepartments.department)
           );
           //show data
-          console.log(dataDepartmentEmployees);
+          console.log(dataAddDepartment);
         }
       } else if (selectedJourney.journey === "Add a role") {
-        //get all roles
+        //get all departments
         let allDepartments = await executeQuery(selectAll("department"));
         //create the array of choices
         let choicesArray = [];
@@ -116,7 +118,7 @@ const init = async () => {
           //get the department id
           const idOfDepartment = await executeQuery(specificDepartment(addRoles.department));
           //insert the data
-          const dataDepartmentEmployees = await executeQuery(
+          const dataAddDepartmentRole = await executeQuery(
             addArole(
               roleID[0].max + 1,
               addRoles.roleTitle,
@@ -125,33 +127,180 @@ const init = async () => {
             )
           );
           //show data
-          console.log(dataDepartmentEmployees);
+          console.log(dataAddDepartmentRole);
         }
-      } else if (selectedJourney.journey === "Add a role") {
+      } else if (selectedJourney.journey === "Add an employee") {
         //get all roles
-        let allDepartments = await executeQuery(selectAll("department"));
+        let allRoles = await executeQuery(selectAll("role"));
         //create the array of choices
-        let choicesArray = [];
-        const pushToArray = allDepartments.map((item) => choicesArray.push(item.name));
+        let rolesChoicesArray = [];
+        const pushToRolesArray = allRoles.map((item) => rolesChoicesArray.push(item.title));
+        //get all managers
+        let allManagers = await executeQuery(employeeByRole("Manager"));
+        //create the array of choices
+        let managerChoicesArray = ["NoN"];
+        const pushToManagerArray = allManagers.map((item) =>
+          managerChoicesArray.push(item.first_name)
+        );
+
         //ask questions
-        let addRoles = await addRole(choicesArray);
+        let addEmployees = await addEmployee(rolesChoicesArray, managerChoicesArray);
         //get data
-        if (addRoles.confirmAdd) {
+        if (addEmployees.confirmAdd) {
           //get the max id from table
-          const roleID = await executeQuery(maxId("role"));
-          //get the department id
-          const idOfDepartment = await executeQuery(specificDepartment(addRoles.department));
+          const employeeID = await executeQuery(maxId("employee"));
+          console.log(addEmployees.manager);
+
+          //get the manager id
+
+          let aManagerId = allManagers.filter(
+            (manager) => manager.first_name === addEmployees.manager
+          )[0].id;
+
+          //get the role id
+          const aRoleId = allRoles.filter((role) => role.title === addEmployees.role)[0].id;
           //insert the data
-          const dataDepartmentEmployees = await executeQuery(
-            addArole(
-              roleID[0].max + 1,
-              addRoles.roleTitle,
-              addRoles.roleSalary,
-              idOfDepartment[0].id
+          const dataAddEmployees = await executeQuery(
+            addAnEmployee(
+              employeeID[0].max + 1,
+              addEmployees.firstName,
+              addEmployees.lastName,
+              aRoleId,
+              aManagerId
             )
           );
           //show data
-          console.log(dataDepartmentEmployees);
+          console.log(dataAddEmployees);
+        }
+      } else if (selectedJourney.journey === "Update an employee's role") {
+        //get all roles
+        const allRoles = await executeQuery(selectAll("role"));
+        //create the array of choices
+        let rolesChoicesArray = [];
+        const pushToRolesArray = allRoles.map((item) => rolesChoicesArray.push(item.title));
+        //get all employees
+        let allEmployees = await executeQuery(selectAll("employee"));
+        //create the array of choices
+        let employeeChoicesArray = [];
+        const pushToEmployeeArray = allEmployees.map((item) =>
+          employeeChoicesArray.push(item.first_name)
+        );
+        //ask questions
+        let updateEmployeeRoles = await updateEmployeeRole(employeeChoicesArray, rolesChoicesArray);
+        //get data
+        if (updateEmployeeRoles.confirmAdd) {
+          //get the employee id
+          const anEmployeeId = allEmployees.filter(
+            (employee) => employee.first_name === updateEmployeeRoles.employee
+          )[0].id;
+          //get the role id
+          const aRoleId = allRoles.filter((role) => role.title === updateEmployeeRoles.role)[0].id;
+          //insert the data
+          const updateEmployeeData = await executeQuery(
+            updateEmployeeDetails("role_id", aRoleId, anEmployeeId)
+          );
+          //show data
+
+          console.log(updateEmployeeData);
+        }
+      } else if (selectedJourney.journey === "Update an employee's manager") {
+        //get all managers
+        const allManagers = await executeQuery(employeeByRole("Manager"));
+        //create the array of choices
+        let managerChoicesArray = [];
+        const pushToManagerArray = allManagers.map((item) =>
+          managerChoicesArray.push(item.first_name)
+        );
+        //get all employees
+        let allEmployees = await executeQuery(selectAll("employee"));
+        //create the array of choices
+        let employeeChoicesArray = [];
+        const pushToEmployeeArray = allEmployees.map((item) =>
+          employeeChoicesArray.push(item.first_name)
+        );
+        //ask questions
+        let updateEmployeeManagers = await updateEmployeeManager(
+          employeeChoicesArray,
+          managerChoicesArray
+        );
+        //get data
+        if (updateEmployeeManagers.confirmAdd) {
+          //get the employee id
+          const anEmployeeId = allEmployees.filter(
+            (employee) => employee.first_name === updateEmployeeManagers.employee
+          )[0].id;
+          //get the manager id
+
+          let aManagerId = allManagers.filter(
+            (manager) => manager.first_name === updateEmployeeManagers.manager
+          )[0].id;
+          //insert the data
+          const updateEmployeeData = await executeQuery(
+            updateEmployeeDetails("manager_id", aManagerId, anEmployeeId)
+          );
+          //show data
+
+          console.log(updateEmployeeData);
+        }
+      } else if (selectedJourney.journey === "Delete options") {
+        //ask questions
+        let deleteOptions = await deleteRecordOption();
+
+        if (deleteOptions.confirmAdd) {
+          if (deleteOptions.deleteOption === "Department") {
+            //get all departments
+            let allDepartments = await executeQuery(selectAll("department"));
+            //create the array of choices
+            let choicesArray = [];
+            const pushToArray = allDepartments.map((item) => choicesArray.push(item.name));
+            //ask  questions
+            const deleteQuestions = await deleteRecord(deleteOptions.deleteOption, choicesArray);
+            if (deleteQuestions.confirmDelete) {
+              const deleteTheSelection = await executeQuery(
+                deleteAnOption("department", "name", deleteQuestions.deleteRecord)
+              );
+            }
+          } else if (deleteOptions.deleteOption === "Role") {
+            //get all roles
+            let allRoles = await executeQuery(selectAll("role"));
+            //create the array of choices
+            let rolesChoicesArray = [];
+            const pushToRolesArray = allRoles.map((item) => rolesChoicesArray.push(item.title));
+            //ask  questions
+            const deleteQuestions = await deleteRecord(
+              deleteOptions.deleteOption,
+              rolesChoicesArray
+            );
+            if (deleteQuestions.confirmDelete) {
+              const deleteTheSelection = await executeQuery(
+                deleteAnOption("role", "title", deleteQuestions.deleteRecord)
+              );
+            }
+          } else if (deleteOptions.deleteOption === "Employee") {
+            //get all employees
+            let allEmployees = await executeQuery(selectAll("employee"));
+            //create the array of choices
+            let employeeChoicesArray = [];
+            const pushToEmployeeArray = allEmployees.map((item) =>
+              employeeChoicesArray.push(item.first_name)
+            );
+
+            //ask  questions
+            const deleteQuestions = await deleteRecord(
+              deleteOptions.deleteOption,
+              employeeChoicesArray
+            );
+            if (deleteQuestions.confirmDelete) {
+              //get the employee id
+              const anEmployeeId = allEmployees.filter(
+                (employee) => employee.first_name === deleteQuestions.deleteRecord
+              )[0].id;
+              //delete
+              const deleteTheSelection = await executeQuery(
+                deleteAnOption("employee", "id", anEmployeeId)
+              );
+            }
+          }
         }
       }
 

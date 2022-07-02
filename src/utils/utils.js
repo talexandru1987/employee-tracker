@@ -5,6 +5,14 @@ const selectAll = (aTable) => `SELECT * FROM ${aTable}`;
 const selectAllRoles = (aTable, columns, aGroup) =>
   `SELECT ${columns} FROM ${aTable} GROUP BY ${aGroup}`;
 
+//select all from a table
+const selectAllEmployees =
+  () => `SELECT e.id, e.first_name, e.last_name, r.title, d.name as department
+FROM employee e 
+JOIN employee e1 ON e1.id= e.id
+JOIN role r ON  e.role_id = r.id
+JOIN department d ON r.department_id = d.id`;
+
 //select by department
 const selectDepartmentEmployees = (aDepartment) => `SELECT * 
 FROM employee e, department d, role r
@@ -59,6 +67,7 @@ const deleteAnOption = (aTable, aValue, anId) =>
 module.exports = {
   selectAll,
   selectDepartmentEmployees,
+  selectAllEmployees,
   selectManagerEmployees,
   selectDepartmentBudget,
   addAdepartment,

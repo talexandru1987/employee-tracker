@@ -20,6 +20,7 @@ const {
 const {
   selectAll,
   selectDepartmentEmployees,
+  selectAllEmployees,
   selectManagerEmployees,
   selectDepartmentBudget,
   addAdepartment,
@@ -71,7 +72,7 @@ const init = async () => {
         console.table(dataRoles);
       } else if (selectedJourney.journey === "View all employees") {
         //get data
-        const dataEmployees = await executeQuery(selectAll("employee"));
+        const dataEmployees = await executeQuery(selectAllEmployees());
         //show data
         console.table(dataEmployees);
       } else if (selectedJourney.journey === "View employees by department") {
@@ -159,7 +160,6 @@ const init = async () => {
         if (addEmployees.confirmAdd) {
           //get the max id from table
           const employeeID = await executeQuery(maxId("employee"));
-          console.log(addEmployees.manager);
 
           //get the manager id
 

@@ -83,4 +83,11 @@ INSERT INTO employee(
   "Smith",
   24,
   NULL
+),
+(
+  35, 
+  "Jes", 
+  "Smith",
+  21,
+  31
 );

@@ -1,5 +1,5 @@
 const mysql = require("mysql2/promise");
-
+//function to intercat with the database using an sql query
 const initDatabase = async (config) => {
   const db = await mysql.createConnection(config);
 

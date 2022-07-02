@@ -1,11 +1,17 @@
 //select all from a table
 const selectAll = (aTable) => `SELECT * FROM ${aTable}`;
+
+//select all roles
+const selectAllRoles = (aTable, columns, aGroup) =>
+  `SELECT ${columns} FROM ${aTable} GROUP BY ${aGroup}`;
+
 //select by department
 const selectDepartmentEmployees = (aDepartment) => `SELECT * 
 FROM employee e, department d, role r
 WHERE e.role_id = r.id 
 and  r.department_id = d.id
 and d.name = '${aDepartment}'`;
+
 // select by manager
 const selectManagerEmployees = (managerId) => `SELECT * 
 FROM employee_db.employee e, employee_db.role r
@@ -63,4 +69,5 @@ module.exports = {
   addAnEmployee,
   updateEmployeeDetails,
   deleteAnOption,
+  selectAllRoles,
 };

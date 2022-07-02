@@ -1,6 +1,9 @@
 //import the env package
 require("dotenv").config();
 
+//require the console table
+const cTable = require("console.table");
+
 //import the questions
 const {
   journey,
@@ -27,6 +30,7 @@ const {
   addAnEmployee,
   updateEmployeeDetails,
   deleteAnOption,
+  selectAllRoles,
 } = require("./utils/utils");
 
 //import the database file
@@ -44,11 +48,7 @@ const init = async () => {
     });
 
     let inProgress = true;
-
-    //let updateEmployeesManager = await updateEmployeeManager(["Steve", "Bob"], ["Alex", "Raluca"]);
-    //let deleteRecordOptions = await deleteRecordOption();
-    //let deleteRecords = await deleteRecord("department", ["IT", "HR", "Finance"]);
-
+    //execute the navigate database loop
     while (inProgress) {
       //start the initial questions
       let selectedJourney = await journey();
@@ -57,38 +57,44 @@ const init = async () => {
         //get data
         const dataDepartments = await executeQuery(selectAll("department"));
         //show data
-        console.log(dataDepartments);
+        console.table(dataDepartments);
       } else if (selectedJourney.journey === "View all roles") {
         //get data
-        const dataRoles = await executeQuery(selectAll("role"));
+        const dataRoles = await executeQuery(
+          selectAllRoles(
+            "role e, department d",
+            "e.id, e.title, e.salary, d.name as department",
+            "e.title"
+          )
+        );
         //show data
-        console.log(dataRoles);
+        console.table(dataRoles);
       } else if (selectedJourney.journey === "View all employees") {
         //get data
         const dataEmployees = await executeQuery(selectAll("employee"));
         //show data
-        console.log(dataEmployees);
+        console.table(dataEmployees);
       } else if (selectedJourney.journey === "View employees by department") {
         //get data
         const dataDepartmentEmployees = await executeQuery(
           selectDepartmentEmployees(selectedJourney.department)
         );
         //show data
-        console.log(dataDepartmentEmployees);
+        console.table(dataDepartmentEmployees);
       } else if (selectedJourney.journey === "View employees by manager") {
         //get data
         const dataManagerEmployees = await executeQuery(
           selectManagerEmployees(selectedJourney.manager)
         );
         //show data
-        console.log(dataManagerEmployees);
+        console.table(dataManagerEmployees);
       } else if (selectedJourney.journey === "View utilized department budget") {
         //get data
         const dataDepartmentBudget = await executeQuery(
           selectDepartmentBudget(selectedJourney.budgetDepartment)
         );
         //show data
-        console.log(dataDepartmentBudget);
+        console.table(dataDepartmentBudget);
       } else if (selectedJourney.journey === "Add a department") {
         //ask questions
         let addDepartments = await addDepartment();
@@ -101,7 +107,9 @@ const init = async () => {
             addAdepartment(departmentID[0].max + 1, addDepartments.department)
           );
           //show data
-          console.log(dataAddDepartment);
+          if (dataAddDepartment.length !== 0) {
+            console.table([{ Update: "Success" }]);
+          }
         }
       } else if (selectedJourney.journey === "Add a role") {
         //get all departments
@@ -127,7 +135,9 @@ const init = async () => {
             )
           );
           //show data
-          console.log(dataAddDepartmentRole);
+          if (dataAddDepartmentRole.length !== 0) {
+            console.table([{ Update: "Success" }]);
+          }
         }
       } else if (selectedJourney.journey === "Add an employee") {
         //get all roles
@@ -138,7 +148,7 @@ const init = async () => {
         //get all managers
         let allManagers = await executeQuery(employeeByRole("Manager"));
         //create the array of choices
-        let managerChoicesArray = ["NoN"];
+        let managerChoicesArray = [];
         const pushToManagerArray = allManagers.map((item) =>
           managerChoicesArray.push(item.first_name)
         );
@@ -170,7 +180,9 @@ const init = async () => {
             )
           );
           //show data
-          console.log(dataAddEmployees);
+          if (dataAddEmployees.length !== 0) {
+            console.table([{ Update: "Success" }]);
+          }
         }
       } else if (selectedJourney.journey === "Update an employee's role") {
         //get all roles
@@ -200,8 +212,9 @@ const init = async () => {
             updateEmployeeDetails("role_id", aRoleId, anEmployeeId)
           );
           //show data
-
-          console.log(updateEmployeeData);
+          if (updateEmployeeData.length !== 0) {
+            console.table([{ Update: "Success" }]);
+          }
         }
       } else if (selectedJourney.journey === "Update an employee's manager") {
         //get all managers
@@ -239,8 +252,9 @@ const init = async () => {
             updateEmployeeDetails("manager_id", aManagerId, anEmployeeId)
           );
           //show data
-
-          console.log(updateEmployeeData);
+          if (updateEmployeeData.length !== 0) {
+            console.table([{ Update: "Success" }]);
+          }
         }
       } else if (selectedJourney.journey === "Delete options") {
         //ask questions
@@ -259,6 +273,10 @@ const init = async () => {
               const deleteTheSelection = await executeQuery(
                 deleteAnOption("department", "name", deleteQuestions.deleteRecord)
               );
+              //show data
+              if (deleteTheSelection.length !== 0) {
+                console.table([{ Update: "Success" }]);
+              }
             }
           } else if (deleteOptions.deleteOption === "Role") {
             //get all roles
@@ -275,6 +293,10 @@ const init = async () => {
               const deleteTheSelection = await executeQuery(
                 deleteAnOption("role", "title", deleteQuestions.deleteRecord)
               );
+              //show data
+              if (deleteTheSelection.length !== 0) {
+                console.table([{ Update: "Success" }]);
+              }
             }
           } else if (deleteOptions.deleteOption === "Employee") {
             //get all employees
@@ -299,14 +321,22 @@ const init = async () => {
               const deleteTheSelection = await executeQuery(
                 deleteAnOption("employee", "id", anEmployeeId)
               );
+              //show data
+              if (deleteTheSelection.length !== 0) {
+                console.table([{ Update: "Success" }]);
+              }
             }
           }
         }
       }
 
-      //stop the loop during testing, DELETE after
-      inProgress = false;
+      if (selectedJourney.journey === "Quit") {
+        inProgress = false;
+      }
     }
+
+    //stop application
+    process.exit();
   } catch (error) {
     console.log(`[ERROR]: Internal error | ${error.message}`);
   }

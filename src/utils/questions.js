@@ -41,14 +41,14 @@ const journey = async () => {
     },
     {
       type: "input",
-      message: "Please enter the manager name",
+      message: "Please enter the manager id",
       name: "manager",
       when(answers) {
         return answers.journey === "View employees by manager";
       },
       validate(answer) {
         if (!answer) {
-          return "Manager name cannot be blank";
+          return "Manager id cannot be blank";
         }
         return true;
       },

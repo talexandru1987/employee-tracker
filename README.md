@@ -2,7 +2,7 @@
 
 ## Description
 
-The Employee Tracker is an interface that will help a user interact with the a database. It allows the user to view tables, add and delete information
+The Employee Tracker is an interface that will help a user interact with a database. It allows the user to view tables, add and delete information
 
 ## User Story
 
